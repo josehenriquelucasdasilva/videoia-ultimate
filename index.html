@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="Interface local para organizar pedidos de criação e edição de vídeo.">
+  <meta name="theme-color" content="#020617">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' blob: data:; media-src 'self' blob: data:; style-src 'self'; script-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'">
+  <title>VideoIA Ultimate</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app" id="app">
+    <header class="header">
+      <button
+        type="button"
+        class="icon-button menu-button"
+        id="menuButton"
+        aria-label="Abrir histórico"
+        aria-controls="sidebar"
+        aria-expanded="false"
+      >
+        <span class="menu-icon" aria-hidden="true"><span></span><span></span><span></span></span>
+      </button>
+
+      <div class="brand">
+        <span class="brand-mark" aria-hidden="true">V</span>
+        <div>
+          <h1>VideoIA Ultimate</h1>
+          <p>Estúdio local de projetos</p>
+        </div>
+      </div>
+
+      <span class="mode-badge">Modo local</span>
+    </header>
+
+    <button type="button" class="page-overlay" id="pageOverlay" aria-label="Fechar histórico" hidden></button>
+
+    <aside class="sidebar" id="sidebar" aria-label="Histórico de projetos" aria-hidden="true">
+      <div class="sidebar-header">
+        <div>
+          <strong>Histórico</strong>
+          <span>Salvo neste aparelho</span>
+        </div>
+        <button type="button" class="icon-button" id="closeSidebarButton" aria-label="Fechar histórico">×</button>
+      </div>
+
+      <button type="button" class="new-project-button" id="newProjectButton">
+        <span aria-hidden="true">＋</span> Novo projeto
+      </button>
+
+      <nav class="history-list" id="historyList" aria-label="Projetos salvos"></nav>
+      <p class="history-empty" id="historyEmpty">Nenhum projeto salvo.</p>
+
+      <div class="sidebar-footer">
+        <button type="button" class="text-button danger" id="clearHistoryButton">Limpar histórico</button>
+      </div>
+    </aside>
+
+    <main class="main" id="main">
+      <section class="welcome-card" id="welcomeCard" aria-labelledby="welcomeTitle">
+        <span class="eyebrow">PROJETO DE VÍDEO</span>
+        <h2 id="welcomeTitle">Descreva o vídeo que você quer preparar</h2>
+        <p>Monte o pedido, anexe referências e escolha duração, estilo, velocidade e resolução. Esta versão organiza tudo no navegador e não envia seus arquivos para a internet.</p>
+
+        <div class="capability-grid">
+          <article>
+            <span aria-hidden="true">✦</span>
+            <strong>Organizar pedidos</strong>
+            <p>Registra instruções e configurações do projeto.</p>
+          </article>
+          <article>
+            <span aria-hidden="true">▣</span>
+            <strong>Pré-visualizar anexos</strong>
+            <p>Exibe fotos e vídeos selecionados localmente.</p>
+          </article>
+          <article>
+            <span aria-hidden="true">↺</span>
+            <strong>Manter histórico</strong>
+            <p>Salva textos e dados no navegador deste aparelho.</p>
+          </article>
+        </div>
+
+        <div class="local-notice">
+          <strong>Limite desta versão:</strong> GitHub Pages não executa uma IA nem renderiza vídeos sozinho. Para gerar ou editar MP4 de verdade, será preciso conectar um backend e uma API.
+        </div>
+      </section>
+
+      <section class="conversation" id="conversation" aria-label="Conversa do projeto" aria-live="polite"></section>
+      <div class="generation-status" id="generationStatus" role="status" hidden>
+        <span class="spinner" aria-hidden="true"></span> Preparando o resumo do pedido…
+      </div>
+    </main>
+
+    <section class="floating-panel files-panel" id="filesPanel" aria-labelledby="filesPanelTitle" aria-hidden="true" hidden>
+      <div class="panel-header">
+        <div>
+          <h2 id="filesPanelTitle">Adicionar referências</h2>
+          <p>Até 10 fotos e 10 vídeos</p>
+        </div>
+        <button type="button" class="icon-button panel-close" data-close-panel aria-label="Fechar painel de arquivos">×</button>
+      </div>
+
+      <div class="file-tiles">
+        <button type="button" class="file-tile" id="photoTile">
+          <span class="tile-icon" aria-hidden="true">＋</span>
+          <strong>Fotos</strong>
+          <small>JPG, PNG, WebP</small>
+        </button>
+        <button type="button" class="file-tile" id="videoTile">
+          <span class="tile-icon" aria-hidden="true">＋</span>
+          <strong>Vídeos</strong>
+          <small>MP4, WebM, MOV</small>
+        </button>
+      </div>
+
+      <input type="file" id="photoInput" accept="image/jpeg,image/png,image/webp,image/gif" multiple>
+      <input type="file" id="videoInput" accept="video/mp4,video/webm,video/quicktime" multiple>
+
+      <p class="file-info" id="fileInfo">Nenhum arquivo selecionado.</p>
+      <div class="selected-files" id="selectedFiles"></div>
+    </section>
+
+    <section class="floating-panel settings-panel" id="settingsPanel" aria-labelledby="settingsPanelTitle" aria-hidden="true" hidden>
+      <div class="panel-header">
+        <div>
+          <h2 id="settingsPanelTitle">Configurações</h2>
+          <p>Preferências do próximo pedido</p>
+        </div>
+        <button type="button" class="icon-button panel-close" data-close-panel aria-label="Fechar configurações">×</button>
+      </div>
+
+      <div class="settings-grid">
+        <label>
+          <span>Resolução</span>
+          <select id="qualidadeSelect">
+            <option value="480p">480p</option>
+            <option value="720p">720p</option>
+            <option value="1080p" selected>1080p</option>
+            <option value="2160p">2160p (4K)</option>
+          </select>
+        </label>
+
+        <label>
+          <span>Velocidade</span>
+          <select id="velocidadeSelect">
+            <option value="0.5">0,5x — lenta</option>
+            <option value="1" selected>1x — normal</option>
+            <option value="1.5">1,5x</option>
+            <option value="2">2x — rápida</option>
+          </select>
+        </label>
+
+        <label>
+          <span>Estilo</span>
+          <select id="temaSelect">
+            <option value="Desenho">Desenho</option>
+            <option value="Anime" selected>Anime</option>
+            <option value="Realista">Realista</option>
+            <option value="Cartoon">Cartoon</option>
+          </select>
+        </label>
+
+        <label>
+          <span>Duração</span>
+          <select id="tempoSelect">
+            <option value="4">4 segundos</option>
+            <option value="5">5 segundos</option>
+            <option value="6">6 segundos</option>
+            <option value="8">8 segundos</option>
+            <option value="10" selected>10 segundos</option>
+            <option value="15">15 segundos</option>
+            <option value="30">30 segundos</option>
+            <option value="60">1 minuto</option>
+          </select>
+        </label>
+      </div>
+    </section>
+
+    <footer class="composer-wrapper">
+      <div class="attachment-strip" id="attachmentStrip" hidden></div>
+      <div class="composer">
+        <button type="button" class="composer-button" id="plusFab" aria-label="Adicionar fotos ou vídeos" aria-controls="filesPanel" aria-expanded="false">＋</button>
+        <button type="button" class="composer-button" id="settingsButton" aria-label="Abrir configurações" aria-controls="settingsPanel" aria-expanded="false">⚙</button>
+
+        <div class="textarea-shell">
+          <textarea id="messageInput" rows="1" maxlength="2000" placeholder="Ex.: Crie uma introdução anime de 10 segundos…" aria-label="Instrução do projeto"></textarea>
+          <span class="character-count" id="characterCount">0/2000</span>
+        </div>
+
+        <button type="button" class="send-button" id="sendButton" aria-label="Enviar pedido" disabled>
+          <span aria-hidden="true">➤</span>
+        </button>
+      </div>
+      <p class="composer-note">Enter envia • Shift + Enter cria uma nova linha</p>
+    </footer>
+
+    <div class="toast-region" id="toastRegion" aria-live="assertive" aria-atomic="true"></div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
